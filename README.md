@@ -6,6 +6,8 @@ This repository contains **community-developed ringtones** for the Hak5 **WiFi P
 
 Ringtones are defined using the **RTTTL (Ring Tone Text Transfer Language)** format and are used by the Pager for alerts, notifications, events, and other audible feedback.
 
+**[🎵 Preview Ringtones Online](https://hak5.github.io/wifipineapplepager-ringtones/)** - Test and listen to ringtones in your browser before using them on your device.
+
 Developers and musicians are encouraged to submit Pull Requests to add new ringtones or improve existing ones.
 
 **Ringtones here are written for the official WiFi Pineapple Pager audio system.  
@@ -44,13 +46,20 @@ Join the community on **[Hak5 Discord](https://hak5.org/discord)**
 
 ## Table of Contents
 
-- [About the WiFi Pineapple Pager](#about-the-wifi-pineapple-pager)
-- [About Pager Ringtones](#about-pager-ringtones)
-- [About RTTTL](#about-rtttl)
-- [Contributing Ringtones](#contributing-ringtones)
-- [Ringtone Guidelines](#ringtone-guidelines)
-- [Legal](#legal)
-- [Disclaimer](#disclaimer)
+- [Ringtone Library for the WiFi Pineapple Pager by Hak5](#ringtone-library-for-the-wifi-pineapple-pager-by-hak5)
+  - [Table of Contents](#table-of-contents)
+  - [Shop](#shop)
+  - [Documentation / Learn More](#documentation--learn-more)
+  - [Community](#community)
+  - [Additional Links](#additional-links)
+  - [About the WiFi Pineapple Pager](#about-the-wifi-pineapple-pager)
+  - [About Pager Ringtones](#about-pager-ringtones)
+  - [About RTTTL](#about-rtttl)
+    - [File Format](#file-format)
+    - [Design Best Practices](#design-best-practices)
+    - [Prohibited Content](#prohibited-content)
+  - [Legal](#legal)
+  - [Disclaimer](#disclaimer)
 
 ---
 
@@ -104,11 +113,15 @@ They are:
 
 Ringtones in this repository are the **source definitions** used directly by the device — **no compilation required**.
 
+You can **[preview and test ringtones](https://hak5.github.io/wifipineapplepager-ringtones/)** in your browser to hear how they sound before uploading them to your device.
+
 ---
 
 ## About RTTTL
 
 RTTTL (Ring Tone Text Transfer Language) is a simple text-based format originally designed for early mobile phones.
+
+**[Preview ringtones online](https://hak5.github.io/wifipineapplepager-ringtones/)** to hear how they sound before using them on your device.
 
 A typical RTTTL ringtone looks like:
 
