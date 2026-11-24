@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTTTL Ringtone Preview</title>
+    <link rel="icon" type="image/png" href="assets/pager-16bit.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-yellow: #E6B800;
+            --primary-yellow-dark: #CC9900;
+            --primary-yellow-light: #FFD633;
+            --primary-black: #1a1a1a;
+            --primary-black-light: #2d2d2d;
+            --accent-red: #C41E3A;
+            --accent-red-dark: #A01A2E;
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #f0f0f0;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-inverse: #ffffff;
+            --border-color: #d0d0d0;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not(.light-mode) {
+                --bg-primary: #121212;
+                --bg-secondary: #1e1e1e;
+                --bg-card: #1e1e1e;
+                --text-primary: #FFD633;
+                --text-secondary: #a0a0a0;
+                --text-inverse: #1a1a1a;
+                --border-color: #3a3a3a;
+                --shadow: rgba(0, 0, 0, 0.4);
+                --shadow-hover: rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .dark-mode {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-card: #1e1e1e;
+            --text-primary: #FFD633;
+            --text-secondary: #a0a0a0;
+            --text-inverse: #1a1a1a;
+            --border-color: #3a3a3a;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --shadow-hover: rgba(0, 0, 0, 0.6);
+        }
+
+        .light-mode {
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #f0f0f0;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-inverse: #ffffff;
+            --border-color: #d0d0d0;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-image: 
+                linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: var(--primary-yellow);
+            margin-bottom: 30px;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            vertical-align: middle;
+            margin-right: 15px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-mode header {
+            color: var(--text-primary);
+        }
+
+        body.light-mode h1 {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1), 0 0 10px rgba(196, 30, 58, 0.2);
+        }
+
+        body.dark-mode h1 {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 214, 51, 0.15);
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-yellow);
+            color: var(--primary-black);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-yellow-dark);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .theme-toggle .material-icons {
+            font-size: 24px;
+        }
+
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            vertical-align: middle;
+        }
+
+        .icon-inline {
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+
+        .playback-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: var(--primary-yellow);
+            color: var(--primary-black);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-yellow-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(230, 184, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-card);
+            border-color: var(--primary-yellow);
+            color: var(--text-primary);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: var(--bg-secondary) !important;
+            color: var(--text-secondary) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        .btn-primary:disabled {
+            background: var(--bg-secondary) !important;
+            color: var(--text-secondary) !important;
+            opacity: 0.7;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .volume-control label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .volume-control input {
+            width: 150px;
+            accent-color: var(--accent-red);
+        }
+
+        .ringtones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .ringtone-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .ringtone-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px var(--shadow-hover);
+            border-color: var(--primary-yellow);
+        }
+
+        .ringtone-card.playing {
+            border: 2px solid var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.2), 0 0 15px rgba(196, 30, 58, 0.15);
+        }
+
+        .ringtone-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .ringtone-name a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .ringtone-name a:hover {
+            color: var(--primary-yellow);
+            text-decoration: underline;
+        }
+
+        .ringtone-name a:visited {
+            color: var(--text-primary);
+            opacity: 0.8;
+        }
+
+        body.dark-mode .ringtone-name a:visited {
+            color: var(--primary-yellow);
+            opacity: 0.9;
+        }
+
+        .ringtone-info {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .ringtone-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ringtone-actions button {
+            flex: 1;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--primary-yellow);
+            font-size: 1.2em;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-yellow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-container .loading-spinner {
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .error {
+            background: rgba(220, 20, 60, 0.1);
+            color: var(--accent-red);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-red);
+        }
+
+        .stats {
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        body.light-mode .stats {
+            color: var(--text-secondary);
+        }
+
+        body.dark-mode .stats {
+            color: var(--primary-yellow);
+        }
+
+        .file-input-area {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+            text-align: center;
+            border: 3px dashed var(--primary-yellow);
+            transition: all 0.3s;
+        }
+
+        .file-input-area:hover {
+            border-color: var(--primary-yellow-light);
+            background: rgba(230, 184, 0, 0.03);
+        }
+
+        .file-input-area.drag-over {
+            border-color: var(--accent-red);
+            background: rgba(196, 30, 58, 0.08);
+            transform: scale(1.02);
+        }
+
+        .file-input-area.hidden {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary-yellow);
+            color: var(--primary-black);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .file-input-button:hover {
+            background: var(--primary-yellow-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(230, 184, 0, 0.3);
+        }
+
+        .file-input-hint {
+            margin-top: 10px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-yellow);
+        }
+
+        .footer-links a .material-icons {
+            font-size: 18px;
+        }
+
+        .footer-copyright {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .footer-copyright a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-copyright a:hover {
+            color: var(--primary-yellow);
+        }
+
+        .footer-copyright-notice {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="material-icons">dark_mode</span>
+    </button>
+    
+    <div class="container">
+        <header>
+            <div class="header-title-container">
+                <img src="assets/pager-16bit.png" alt="WiFi Pineapple Pager" class="header-logo">
+                <h1><span class="material-icons icon-inline">library_music</span> RTTTL Ringtone Preview</h1>
+            </div>
+            <p class="subtitle">Preview ringtones for the WiFi Pineapple Pager</p>
+        </header>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="file-input-area hidden" id="fileInputArea">
+            <label class="file-input-label" for="fileInput">Load Ringtones from Files</label>
+            <label for="fileInput" class="file-input-button">Choose Files</label>
+            <input type="file" id="fileInput" class="file-input" multiple accept=".rtttl" />
+            <div class="file-input-hint">Select one or more .rtttl files, or drag and drop them here</div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search ringtones...">
+            <div class="playback-controls">
+                <button class="btn-primary" id="playAllBtn">
+                    <span class="material-icons icon-inline">play_arrow</span> Play All
+                </button>
+                <button class="btn-secondary" id="stopAllBtn">
+                    <span class="material-icons icon-inline">stop</span> Stop All
+                </button>
+                <div class="volume-control">
+                    <label for="volumeSlider">Volume:</label>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    <span id="volumeValue">50%</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorContainer"></div>
+        <div id="ringtonesContainer" class="ringtones-grid"></div>
+    </div>
+
+    <footer id="footer">
+        <div class="footer-links">
+            <a href="#" id="readmeLink" target="_blank" rel="noopener noreferrer">
+                <span class="material-icons">description</span>
+                <span>README</span>
+            </a>
+            <a href="#" id="repoLink" target="_blank" rel="noopener noreferrer">
+                <span class="material-icons">code</span>
+                <span>Repository</span>
+            </a>
+            <a href="https://docs.hak5.org/wifi-pineapple-pager/wifi-pineapple-pager-by-hak5/" target="_blank" rel="noopener noreferrer">
+                <span class="material-icons">menu_book</span>
+                <span>WiFi Pineapple Pager Docs</span>
+            </a>
+            <a href="https://hak5.org" target="_blank" rel="noopener noreferrer">
+                <span class="material-icons">public</span>
+                <span>Hak5.org</span>
+            </a>
+        </div>
+        <div class="footer-copyright">
+            Ringtone Library for the <a href="https://hak5.org/products/wifi-pineapple-pager" target="_blank" rel="noopener noreferrer">WiFi Pineapple Pager</a> by <a href="https://hak5.org" target="_blank" rel="noopener noreferrer">Hak5</a>
+        </div>
+        <div class="footer-copyright-notice">
+            © <span id="copyrightYear"></span> Hak5 LLC.
+        </div>
+    </footer>
+
+    <script>
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function escapeUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.href;
+            } catch (e) {
+                return encodeURI(url);
+            }
+        }
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const html = document.documentElement;
+            
+            function getSystemTheme() {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            function setTheme(theme) {
+                    if (theme === 'dark') {
+                        body.classList.add('dark-mode');
+                        body.classList.remove('light-mode');
+                        html.classList.add('dark-mode');
+                        html.classList.remove('light-mode');
+                        themeToggle.innerHTML = '<span class="material-icons">light_mode</span>';
+                    } else {
+                        body.classList.add('light-mode');
+                        body.classList.remove('dark-mode');
+                        html.classList.add('light-mode');
+                        html.classList.remove('dark-mode');
+                        themeToggle.innerHTML = '<span class="material-icons">dark_mode</span>';
+                    }
+                localStorage.setItem('theme', theme);
+            }
+            
+            function initTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    setTheme(savedTheme);
+                } else {
+                    const systemTheme = getSystemTheme();
+                    setTheme(systemTheme);
+                }
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+            
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+            
+            initTheme();
+        })();
+
+        class RTTTLPlayer {
+            constructor() {
+                this.audioContext = null;
+                this.currentOscillators = [];
+                this.volume = 0.5;
+                this.isPlaying = false;
+                this.currentRingtone = null;
+            }
+
+            init() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    throw new Error('Web Audio API not supported');
+                }
+            }
+
+            async resumeIfNeeded() {
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+            }
+
+            parseRTTTL(rtttlString) {
+                const parts = rtttlString.split(':');
+                if (parts.length < 3) {
+                    throw new Error('Invalid RTTTL format');
+                }
+
+                const name = parts[0].trim();
+                const defaults = parts[1].split(',');
+                const notes = parts[2].split(',');
+
+                const config = {
+                    duration: 4,
+                    octave: 4,
+                    bpm: 63
+                };
+
+                defaults.forEach(defaultValue => {
+                    const [key, value] = defaultValue.split('=');
+                    if (key === 'd') config.duration = parseInt(value) || 4;
+                    if (key === 'o') config.octave = parseInt(value) || 4;
+                    if (key === 'b') config.bpm = parseInt(value) || 63;
+                });
+
+                return { name, config, notes };
+            }
+
+            getNoteFrequency(noteName, octave) {
+                const noteFrequencies = {
+                    'c': 261.63, 'c#': 277.18, 'db': 277.18,
+                    'd': 293.66, 'd#': 311.13, 'eb': 311.13,
+                    'e': 329.63,
+                    'f': 349.23, 'f#': 369.99, 'gb': 369.99,
+                    'g': 392.00, 'g#': 415.30, 'ab': 415.30,
+                    'a': 440.00, 'a#': 466.16, 'bb': 466.16,
+                    'b': 493.88
+                };
+
+                const normalizedNote = noteName.toLowerCase();
+                const baseFreq = noteFrequencies[normalizedNote] || 0;
+                if (baseFreq === 0) return 0;
+
+                const octaveDiff = octave - 4;
+                return baseFreq * Math.pow(2, octaveDiff);
+            }
+
+            async playRTTTL(rtttlString, onComplete) {
+                if (this.isPlaying) {
+                    this.stop();
+                }
+
+                await this.resumeIfNeeded();
+
+                this.isPlaying = true;
+                const { name, config, notes } = this.parseRTTTL(rtttlString);
+                this.currentRingtone = name;
+
+                const beatDurationMs = 60000 / config.bpm;
+                const wholeNoteDurationMs = beatDurationMs * 4;
+                let currentTime = this.audioContext.currentTime;
+
+                for (const noteStr of notes) {
+                    if (!this.isPlaying) break;
+
+                    const trimmed = noteStr.trim();
+                    if (!trimmed) continue;
+
+                    let duration = config.duration;
+                    let note = trimmed;
+                    let dot = false;
+
+                    const durationMatch = trimmed.match(/^(\d+)/);
+                    if (durationMatch) {
+                        duration = parseInt(durationMatch[1]);
+                        note = trimmed.substring(durationMatch[0].length);
+                    }
+
+                    if (note.endsWith('.')) {
+                        dot = true;
+                        note = note.slice(0, -1);
+                    }
+
+                    if (note.toLowerCase() === 'p') {
+                        let pauseDuration = wholeNoteDurationMs / duration;
+                        if (dot) {
+                            pauseDuration *= 1.5;
+                        }
+                        currentTime += pauseDuration / 1000;
+                        continue;
+                    }
+
+                    let noteOctave = config.octave;
+                    let noteName = note;
+
+                    const octaveMatch = note.match(/(\d+)$/);
+                    if (octaveMatch) {
+                        noteOctave = parseInt(octaveMatch[1]);
+                        noteName = note.substring(0, octaveMatch.index);
+                    }
+
+                    const frequency = this.getNoteFrequency(noteName, noteOctave);
+                    if (frequency === 0) {
+                        continue;
+                    }
+
+                    let noteDuration = wholeNoteDurationMs / duration;
+                    if (dot) {
+                        noteDuration *= 1.5;
+                    }
+                    noteDuration = noteDuration / 1000;
+
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = frequency;
+
+                    const attackTime = 0.005;
+                    const releaseTime = 0.01;
+                    const sustainLevel = this.volume;
+
+                    gainNode.gain.setValueAtTime(0, currentTime);
+                    gainNode.gain.linearRampToValueAtTime(sustainLevel, currentTime + attackTime);
+                    gainNode.gain.setValueAtTime(sustainLevel, currentTime + noteDuration - releaseTime);
+                    gainNode.gain.linearRampToValueAtTime(0, currentTime + noteDuration);
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + noteDuration);
+
+                    this.currentOscillators.push(oscillator);
+                    currentTime += noteDuration;
+                }
+
+                const totalDuration = currentTime - this.audioContext.currentTime;
+                setTimeout(() => {
+                    this.isPlaying = false;
+                    this.currentRingtone = null;
+                    if (onComplete) onComplete();
+                }, totalDuration * 1000);
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.currentOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {}
+                });
+                this.currentOscillators = [];
+                this.currentRingtone = null;
+            }
+
+            setVolume(volume) {
+                this.volume = volume / 100;
+            }
+        }
+
+        class RingtonePreview {
+            constructor() {
+                this.player = new RTTTLPlayer();
+                this.ringtones = [];
+                this.filteredRingtones = [];
+                this.currentPlayingCard = null;
+                this.isFileProtocol = window.location.protocol === 'file:';
+                this.shouldStopPlayAll = false;
+                this.repoUrl = this.detectRepoUrl();
+            }
+
+            detectRepoUrl() {
+                const hostname = window.location.hostname;
+                const pathname = window.location.pathname;
+                
+                if (hostname.includes('github.io')) {
+                    const parts = hostname.split('.');
+                    const username = parts[0];
+                    const repoMatch = pathname.match(/\/([^\/]+)/);
+                    if (repoMatch) {
+                        return `https://github.com/${username}/${repoMatch[1]}`;
+                    }
+                    return `https://github.com/${username}/wifipineapplepager-ringtones`;
+                }
+                
+                if (hostname === 'github.com' || hostname.includes('github.com')) {
+                    const match = pathname.match(/\/([^\/]+)\/([^\/]+)/);
+                    if (match) {
+                        return `https://github.com/${match[1]}/${match[2]}`;
+                    }
+                }
+                
+                const currentPath = window.location.pathname;
+                if (currentPath.includes('/wifipineapplepager-ringtones')) {
+                    const match = currentPath.match(/\/([^\/]+)\/([^\/]+)/);
+                    if (match) {
+                        return `https://github.com/${match[1]}/${match[2]}`;
+                    }
+                }
+                
+                return 'https://github.com/hak5/wifipineapplepager-ringtones';
+            }
+
+            getFileUrl(filename) {
+                const branch = 'master';
+                return `${this.repoUrl}/blob/${branch}/ringtones/${filename}`;
+            }
+
+            async init() {
+                try {
+                    this.player.init();
+                    this.setupEventListeners();
+                    this.setupFooter();
+                    this.showLoading();
+                    
+                    if (this.isFileProtocol) {
+                        this.showFileInput();
+                        this.hideLoading();
+                    } else {
+                        await this.loadRingtonesFromWeb();
+                        this.hideLoading();
+                    }
+                    
+                    this.render();
+                } catch (error) {
+                    this.hideLoading();
+                    this.showError('Failed to initialize: ' + error.message);
+                }
+            }
+
+            showLoading() {
+                const container = document.getElementById('ringtonesContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Loading ringtones...</div>
+                        </div>
+                    `;
+                }
+            }
+
+            hideLoading() {
+                const container = document.getElementById('ringtonesContainer');
+                if (container && container.querySelector('.loading-container')) {
+                    container.innerHTML = '';
+                }
+            }
+
+            setupFooter() {
+                const readmeLink = document.getElementById('readmeLink');
+                if (readmeLink) {
+                    readmeLink.href = `${this.repoUrl}/blob/master/README.md`;
+                }
+                
+                const repoLink = document.getElementById('repoLink');
+                if (repoLink) {
+                    repoLink.href = `${this.repoUrl}#contributing-ringtones`;
+                }
+                
+                const copyrightYear = document.getElementById('copyrightYear');
+                if (copyrightYear) {
+                    copyrightYear.textContent = new Date().getFullYear();
+                }
+            }
+
+            showFileInput() {
+                const fileInputArea = document.getElementById('fileInputArea');
+                fileInputArea.classList.remove('hidden');
+            }
+
+            hideFileInput() {
+                const fileInputArea = document.getElementById('fileInputArea');
+                fileInputArea.classList.add('hidden');
+            }
+
+            async loadRingtonesFromWeb() {
+                const ringtoneFiles = [
+                    'Achievement.rtttl', 'alert.rtttl', 'battery_critical.rtttl', 'battery_low.rtttl',
+                    'bonus.rtttl', 'bootup.rtttl', 'deskphone.rtttl', 'EdgeRunners.rtttl',
+                    'error.rtttl', 'fire.rtttl', 'funky.rtttl', 'getkey.rtttl',
+                    'getmachine.rtttl', 'hack_stealth.rtttl', 'hak_bleep.rtttl', 'hak5_the_planet.rtttl',
+                    'halt.rtttl', 'hanzomon.rtttl', 'health.rtttl', 'kim-possible-pager.rtttl',
+                    'leveldone.rtttl', 'LOZSecret.rtttl', 'makeup.rtttl', 'makeup2.rtttl',
+                    'mute.rtttl', 'Notify.rtttl', 'noway.rtttl', 'pager.rtttl',
+                    'power_connected.rtttl', 'power_disconnected.rtttl', 'pushwall.rtttl', 'rich.rtttl',
+                    'rickroll-short.rtttl', 'rickroll.rtttl', 'ringring.rtttl', 'single_beep.rtttl',
+                    'smoke.rtttl', 'springfield.rtttl', 'starwars.rtttl', 'urgent.rtttl',
+                    'warning.rtttl', 'xp.rtttl', 'yeah.rtttl'
+                ];
+
+                let loadedCount = 0;
+                for (const filename of ringtoneFiles) {
+                    try {
+                        const response = await fetch(`ringtones/${filename}`);
+                        if (!response.ok) continue;
+                        const text = await response.text();
+                        const trimmed = text.trim();
+                        if (trimmed) {
+                            this.ringtones.push({
+                                filename,
+                                content: trimmed,
+                                name: filename.replace('.rtttl', '')
+                            });
+                            loadedCount++;
+                        }
+                    } catch (error) {
+                    }
+                }
+
+                if (loadedCount === 0 && !this.isFileProtocol) {
+                    this.showFileInput();
+                }
+
+                this.filteredRingtones = [...this.ringtones];
+            }
+
+            async loadRingtonesFromFiles(files) {
+                this.showLoading();
+                const newRingtones = [];
+                
+                for (const file of files) {
+                    if (!file.name.endsWith('.rtttl')) continue;
+                    
+                    const existingIndex = this.ringtones.findIndex(r => r.filename === file.name);
+                    if (existingIndex >= 0) {
+                        continue;
+                    }
+                    
+                    try {
+                        const text = await file.text();
+                        const trimmed = text.trim();
+                        if (trimmed) {
+                            newRingtones.push({
+                                filename: file.name,
+                                content: trimmed,
+                                name: file.name.replace('.rtttl', '')
+                            });
+                        }
+                    } catch (error) {
+                    }
+                }
+
+                this.ringtones.push(...newRingtones);
+                this.filteredRingtones = [...this.ringtones];
+                this.hideLoading();
+                this.render();
+            }
+
+            setupEventListeners() {
+                document.getElementById('searchBox').addEventListener('input', (e) => {
+                    this.filterRingtones(e.target.value);
+                });
+
+                document.getElementById('playAllBtn').addEventListener('click', async () => {
+                    await this.player.resumeIfNeeded();
+                    this.playAll();
+                });
+
+                document.getElementById('stopAllBtn').addEventListener('click', () => {
+                    this.stopAll();
+                });
+
+                document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                    const volume = parseInt(e.target.value);
+                    this.player.setVolume(volume);
+                    document.getElementById('volumeValue').textContent = volume + '%';
+                });
+
+                const fileInput = document.getElementById('fileInput');
+                const fileInputArea = document.getElementById('fileInputArea');
+
+                fileInput.addEventListener('change', async (e) => {
+                    const files = Array.from(e.target.files);
+                    if (files.length > 0) {
+                        await this.loadRingtonesFromFiles(files);
+                    }
+                });
+
+                fileInputArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileInputArea.classList.add('drag-over');
+                });
+
+                fileInputArea.addEventListener('dragleave', () => {
+                    fileInputArea.classList.remove('drag-over');
+                });
+
+                fileInputArea.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    fileInputArea.classList.remove('drag-over');
+                    const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.rtttl'));
+                    if (files.length > 0) {
+                        await this.loadRingtonesFromFiles(files);
+                    }
+                });
+            }
+
+            filterRingtones(searchTerm) {
+                const term = searchTerm.toLowerCase();
+                this.filteredRingtones = this.ringtones.filter(ringtone =>
+                    ringtone.name.toLowerCase().includes(term) ||
+                    ringtone.filename.toLowerCase().includes(term)
+                );
+                this.render();
+            }
+
+            async playRingtone(ringtone, cardElement = null) {
+                if (this.currentPlayingCard) {
+                    this.currentPlayingCard.classList.remove('playing');
+                }
+
+                if (cardElement) {
+                    cardElement.classList.add('playing');
+                    this.currentPlayingCard = cardElement;
+                }
+
+                await this.player.resumeIfNeeded();
+                this.player.stop();
+                await this.player.playRTTTL(ringtone.content, () => {
+                    if (cardElement) {
+                        cardElement.classList.remove('playing');
+                    }
+                    this.currentPlayingCard = null;
+                });
+            }
+
+            stopAll() {
+                this.shouldStopPlayAll = true;
+                this.player.stop();
+                if (this.currentPlayingCard) {
+                    this.currentPlayingCard.classList.remove('playing');
+                    this.currentPlayingCard = null;
+                }
+            }
+
+            async playAll() {
+                this.stopAll();
+                this.shouldStopPlayAll = false;
+                
+                for (const ringtone of this.filteredRingtones) {
+                    if (this.shouldStopPlayAll) {
+                        break;
+                    }
+                    
+                    if (this.player.isPlaying) {
+                        await new Promise(resolve => {
+                            const checkInterval = setInterval(() => {
+                                if (!this.player.isPlaying || this.shouldStopPlayAll) {
+                                    clearInterval(checkInterval);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    if (this.shouldStopPlayAll) {
+                        break;
+                    }
+                    
+                    await this.playRingtone(ringtone);
+                }
+                
+                this.shouldStopPlayAll = false;
+            }
+
+            render() {
+                const container = document.getElementById('ringtonesContainer');
+                const stats = document.getElementById('stats');
+
+                stats.textContent = `Showing ${this.filteredRingtones.length} of ${this.ringtones.length} ringtones`;
+
+                if (this.filteredRingtones.length === 0) {
+                    container.innerHTML = '<div class="loading">No ringtones found</div>';
+                    return;
+                }
+
+                container.innerHTML = this.filteredRingtones.map((ringtone, index) => {
+                    try {
+                        const parsed = this.player.parseRTTTL(ringtone.content);
+                        const ringtoneId = `ringtone-${index}`;
+                        const fileUrl = this.getFileUrl(ringtone.filename);
+                        return `
+                            <div class="ringtone-card" id="${ringtoneId}">
+                                <div class="ringtone-name">
+                                    <a href="${escapeUrl(fileUrl)}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(ringtone.filename)} on GitHub">
+                                        ${escapeHtml(parsed.name)}
+                                    </a>
+                                </div>
+                                <div class="ringtone-info">
+                                    BPM: ${parsed.config.bpm} | Octave: ${parsed.config.octave} | Duration: ${parsed.config.duration}
+                                </div>
+                                <div class="ringtone-actions">
+                                    <button class="btn-primary play-btn" data-index="${index}">
+                                        <span class="material-icons icon-inline">play_arrow</span> Play
+                                    </button>
+                                    <button class="btn-secondary stop-btn">
+                                        <span class="material-icons icon-inline">stop</span> Stop
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } catch (e) {
+                        const fileUrl = this.getFileUrl(ringtone.filename);
+                        return `
+                            <div class="ringtone-card">
+                                <div class="ringtone-name">
+                                    <a href="${escapeUrl(fileUrl)}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(ringtone.filename)} on GitHub">
+                                        ${escapeHtml(ringtone.name)}
+                                    </a>
+                                </div>
+                                <div class="ringtone-info">Error parsing ringtone</div>
+                            </div>
+                        `;
+                    }
+                }).join('');
+
+                container.querySelectorAll('.play-btn').forEach((btn, index) => {
+                    btn.addEventListener('click', () => {
+                        const ringtone = this.filteredRingtones[index];
+                        const card = btn.closest('.ringtone-card');
+                        this.playRingtone(ringtone, card);
+                    });
+                });
+
+                container.querySelectorAll('.stop-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.stopAll();
+                    });
+                });
+            }
+
+            showError(message) {
+                const container = document.getElementById('errorContainer');
+                container.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+            }
+        }
+
+        const preview = new RingtonePreview();
+        preview.init();
+    </script>
+</body>
+</html>
